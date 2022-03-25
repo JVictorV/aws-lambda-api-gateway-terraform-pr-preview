@@ -6,6 +6,6 @@ module.exports.handler = async (ev) => {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ teste: "baile do jaca do preview 2" }),
+		body: JSON.stringify({ teste: "baile do jaca em prod menor" }),
 	};
 };

@@ -1,27 +1,20 @@
+locals {
+  stage_name = (
+  	var.current_stage == "dev" || var.current_stage == "prod"
+  	? var.current_stage
+  	: "${var.current_stage}-${var.pr_id}"
+  )
+}
+
 resource "aws_apigatewayv2_stage" "lambda_stage" {
   api_id = data.terraform_remote_state.shared.outputs.shared_data.lambda_gateway_id
 
-  name        = (
-  	var.current_stage == "dev" || var.current_stage == "prod"
-	? var.current_stage
-	: "${var.current_stage}-${var.pr_id}"
-  )
+  name        = "${local.stage_name}-stage"
   auto_deploy = true
-}
 
-resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id = data.terraform_remote_state.shared.outputs.shared_data.lambda_gateway_id
-
-  integration_type   = "AWS_PROXY"
-  integration_method = "POST"
-  integration_uri    = aws_lambda_function.app_lambda.invoke_arn
-}
-
-resource "aws_apigatewayv2_route" "app_route" {
-  api_id = data.terraform_remote_state.shared.outputs.shared_data.lambda_gateway_id
-
-  route_key = "$default"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  stage_variables = {
+	function = aws_lambda_function.app_lambda.function_name
+  }
 }
 
 resource "aws_lambda_permission" "api_gw_lambda_permission" {

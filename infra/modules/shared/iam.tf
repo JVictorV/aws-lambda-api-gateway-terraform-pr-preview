@@ -13,6 +13,12 @@ resource "aws_iam_role" "lambda_execution_role" {
 	  }
 	]
   })
+
+
+  tags = {
+	Name = "${var.app_name} IAM Role"
+	Owner = "Terraform"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_role_policy" {

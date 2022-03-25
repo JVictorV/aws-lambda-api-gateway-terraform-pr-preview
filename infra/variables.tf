@@ -26,6 +26,11 @@ variable "commit_hash" {
 variable "current_stage" {
   description = "Either prod, dev or preview"
   type        = string
+
+  validation {
+	condition = contains(["prod", "dev", "preview"], var.current_stage)
+  	error_message = "Variable var.current_stage should be either prod, dev or preview."
+  }
 }
 
 variable "lambda_bucket_name" {
